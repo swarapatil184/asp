@@ -1,0 +1,22 @@
+using System.Data.Entity;
+
+namespace StudentCRUD.Models
+{
+    public class StudentContext : DbContext
+    {
+        public StudentContext()
+            : base("StudentConnection")
+        {
+        }
+
+        public DbSet<Student> Students
+        {
+            get;
+            set;
+        }
+    }
+}
+
+<connectionStrings>
+    <add name="StudentConnection" connectionString="Data Source=(LocalDB)\MSSQLLocalDB;         Initial Catalog=StudentDB;         Integrated Security=True" providerName="System.Data.SqlClient" />
+  </connectionStrings>
