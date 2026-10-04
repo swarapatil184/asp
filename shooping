@@ -12,16 +12,17 @@ namespace ShoppingCartApp.Controllers
         {
             List<Product> products = new List<Product>()
             {
-                new Product { ProductID = 1, ProductName = "Laptop", Price = 55000 },
-                new Product { ProductID = 2, ProductName = "Mouse", Price = 600 },
-                new Product { ProductID = 3, ProductName = "Keyboard", Price = 1500 },
-                new Product { ProductID = 4, ProductName = "Monitor", Price = 12000 }
+                new Product{ ProductID=1, ProductName="Laptop", Price=55000 },
+                new Product{ ProductID=2, ProductName="Mouse", Price=600 },
+                new Product{ ProductID=3, ProductName="Keyboard", Price=1500 },
+                new Product{ ProductID=4, ProductName="Monitor", Price=12000 }
             };
-
             return View(products);
         }
     }
-cart controoler code:
+}
+
+Cart controoler code:
 using ShoppingCartApp.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,39 +32,38 @@ namespace ShoppingCartApp.Controllers
 {
     public class CartController : Controller
     {
+        public ActionResult Index()
+        {
+            List<CartItem> cart = Session["Cart"] as List<CartItem>;
+            if (cart == null)
+            {
+                cart = new List<CartItem>();
+            }
+            return View(cart);
+        }
+
         public ActionResult AddToCart(int id)
         {
             List<Product> products = new List<Product>()
             {
-                new Product { ProductID = 1, ProductName = "Laptop", Price = 55000 },
-                new Product { ProductID = 2, ProductName = "Mouse", Price = 600 },
-                new Product { ProductID = 3, ProductName = "Keyboard", Price = 1500 },
-                new Product { ProductID = 4, ProductName = "Monitor", Price = 12000 }
+                new Product{ ProductID=1, ProductName="Laptop", Price=55000 },
+                new Product{ ProductID=2, ProductName="Mouse", Price=600 },
+                new Product{ ProductID=3, ProductName="Keyboard", Price=1500 },
+                new Product{ ProductID=4, ProductName="Monitor", Price=12000 }
             };
 
             Product product = products.FirstOrDefault(x => x.ProductID == id);
 
-            List<CartItem> cart;
-
-            if (Session["Cart"] == null)
+            List<CartItem> cart = Session["Cart"] as List<CartItem>;
+            if (cart == null)
             {
                 cart = new List<CartItem>();
             }
-            else
-            {
-                cart = (List<CartItem>)Session["Cart"];
-            }
 
-            CartItem item = cart.FirstOrDefault(
-                x => x.Product.ProductID == id);
-
+            CartItem item = cart.FirstOrDefault(x => x.Product.ProductID == id);
             if (item == null)
             {
-                cart.Add(new CartItem()
-                {
-                    Product = product,
-                    Quantity = 1
-                });
+                cart.Add(new CartItem() { Product = product, Quantity = 1 });
             }
             else
             {
@@ -71,48 +71,27 @@ namespace ShoppingCartApp.Controllers
             }
 
             Session["Cart"] = cart;
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        public ActionResult Index()
-        {
-            List<CartItem> cart;
-
-            if (Session["Cart"] == null)
-            {
-                cart = new List<CartItem>();
-            }
-            else
-            {
-                cart = (List<CartItem>)Session["Cart"];
-            }
-
-            return View(cart);
+            return RedirectToAction("Index", "Cart");
         }
 
         public ActionResult Remove(int id)
         {
             List<CartItem> cart = Session["Cart"] as List<CartItem>;
-
             if (cart != null)
             {
-                CartItem item = cart.FirstOrDefault(
-                    x => x.Product.ProductID == id);
-
+                CartItem item = cart.FirstOrDefault(x => x.Product.ProductID == id);
                 if (item != null)
                 {
                     cart.Remove(item);
                 }
-
                 Session["Cart"] = cart;
             }
-
             return RedirectToAction("Index");
         }
     }
 }
-views home index:
+
+Views home index:
 @model IEnumerable<ShoppingCartApp.Models.Product>
 
 <h2>Products</h2>
@@ -122,27 +101,20 @@ views home index:
         <th>ID</th>
         <th>Name</th>
         <th>Price</th>
-        <th></th>
+        <th>Action</th>
     </tr>
-
     @foreach (var item in Model)
     {
         <tr>
             <td>@item.ProductID</td>
             <td>@item.ProductName</td>
             <td>@item.Price</td>
-            <td>
-                @Html.ActionLink(
-                    "Add To Cart",
-                    "AddToCart",
-                    "Cart",
-                    new { id = item.ProductID },
-                    null)
-            </td>
+            <td>@Html.ActionLink("Add To Cart", "AddToCart", "Cart", new { id = item.ProductID }, null)</td>
         </tr>
     }
 </table>
-views cart index:
+
+Views cart index:
 @model IEnumerable<ShoppingCartApp.Models.CartItem>
 
 <h2>Shopping Cart</h2>
@@ -155,7 +127,6 @@ views cart index:
         <th>Total</th>
         <th>Action</th>
     </tr>
-
     @foreach (var item in Model)
     {
         <tr>
@@ -163,15 +134,17 @@ views cart index:
             <td>@item.Product.Price</td>
             <td>@item.Quantity</td>
             <td>@(item.Product.Price * item.Quantity)</td>
-            <td>
-                @Html.ActionLink(
-                    "Remove",
-                    "Remove",
-                    "Cart",
-                    new { id = item.Product.ProductID },
-                    null)
-            </td>
+            <td>@Html.ActionLink("Remove", "Remove", new { id = item.Product.ProductID })</td>
         </tr>
     }
+    <tr>
+        <td colspan="3"><b>Grand Total</b></td>
+        <td colspan="2"><b>@Model.Sum(x => x.Product.Price * x.Quantity)</b></td>
+    </tr>
 </table>
-}
+
+@Html.ActionLink("Continue Shopping", "Index", "Home")
+
+
+in  views/shared/lauoyt.cshtml:
+<li>@Html.ActionLink("Cart","Index","Cart")</li>
