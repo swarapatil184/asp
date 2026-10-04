@@ -1,8 +1,9 @@
+HOMECONTROLLER:
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Caching;
-using CACHING.Models;
+using CachingDemo.Models;
 
 namespace CachingDemo.Controllers
 {
@@ -45,10 +46,8 @@ namespace CachingDemo.Controllers
             return View(products);
         }
     }
-
-
-view code in home -->index.cshtml:
-@model IEnumerable<C.Product>
+VIEWS:HOME:INDEX.CSHTML
+@model IEnumerable<CachingDemo.Models.Product>
 
 @{
     ViewBag.Title = "Caching Demo";
