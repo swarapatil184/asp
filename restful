@@ -60,7 +60,7 @@ namespace StudentRESTService.Controllers
             return Ok(student);
         }
     }
-
+}
 
   
 in webapi config add:
@@ -68,4 +68,4 @@ in webapi config add:
   config.Formatters.Remove(config.Formatters.XmlFormatter);
 
   
-}
+
